@@ -55,18 +55,18 @@ else:
     print("Matrix dos testes:\n", confusion_matrix(y_test, y_pred))
 
     # Para prever uma imagem qualquer
-    def predict_custom_image(imagem_caminho, classificador, tamanho_img=(64, 64)):
+    def predict_custom_image(pasta_teste, classificador, tamanho_img=(64, 64)):
+        previsoes = []
         #normaliza a imagem também
-        img_array = careggar_imagem(imagem_caminho, tamanho_img)
-        if img_array is not None:
-            #faz o modelo "prever"
-            previsao = classificador.predict([img_array])
-            return previsao[0]
-        else:
-            return None
+        for imagem in os.listdir(pasta_teste):
+            img_array = careggar_imagem(os.path.join(pasta_teste, imagem), tamanho_img)
+            if img_array is not None:
+                #faz o modelo "prever"
+                previsao = classificador.predict([img_array])
+                previsoes.append(f"{previsao[0]} {'verdadeiro' if previsao[0] in ['I_u', 'i_l'] else 'falso'}")
+        return previsoes
 
     # Caminho das imagens removidas do dataset para o modelo prever
-    caminho_imagem = ["test_model/train_49_00000.png", "test_model/train_61_00000.png", "test_model/paint.png"]
-    for imagem in caminho_imagem:
-        classe_prevista = predict_custom_image(imagem, mlp_clf)
-        print(f"A previsão retornou: {classe_prevista}")
+    pasta_teste = "test_model"
+    classe_prevista = predict_custom_image(pasta_teste, mlp_clf)
+    print(f"A previsão retornou: {classe_prevista}")
